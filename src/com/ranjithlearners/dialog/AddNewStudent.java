@@ -9,23 +9,25 @@ import com.ranjithlearners.connection.MySQLProxy;
 import com.ranjithlearners.gui.HomeScreen;
 import com.ranjithlearners.util.AESUtil;
 import com.ranjithlearners.validation.Validator;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import raven.toast.Notifications;
-import java.awt.BorderLayout;
+import java.sql.PreparedStatement;
 
 /**
  *
  * @author Akash Weerasinghe
  */
-import java.awt.BorderLayout;
+import javax.lang.model.util.Types;
+
 public class AddNewStudent extends javax.swing.JDialog {
 
     /**
      * Creates new form AddNewStudent
      */
     private final AddNewStudent addNewStudent;
-    
+
     public AddNewStudent(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         addNewStudent = this;
@@ -67,7 +69,6 @@ public class AddNewStudent extends javax.swing.JDialog {
         comboCourse = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         txtID = new javax.swing.JTextField();
-        txtDOB = new javax.swing.JFormattedTextField();
         jButton1 = new javax.swing.JButton();
         txtMedNo = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -75,6 +76,7 @@ public class AddNewStudent extends javax.swing.JDialog {
         addBtn = new javax.swing.JButton();
         txtAddress = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        txtDOB = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -115,8 +117,6 @@ public class AddNewStudent extends javax.swing.JDialog {
 
         txtID.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
         txtID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        txtDOB.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy-MM-dd"))));
 
         jButton1.setBackground(new java.awt.Color(102, 0, 0));
         jButton1.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
@@ -162,19 +162,6 @@ public class AddNewStudent extends javax.swing.JDialog {
                     .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(txtMedNo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel5))
-                        .addGap(168, 168, 168)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtMobile)
-                            .addComponent(txtDOB, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel3))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -184,12 +171,22 @@ public class AddNewStudent extends javax.swing.JDialog {
                     .addComponent(txtAddress)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5)
                             .addComponent(jLabel4)
                             .addComponent(jLabel1)
                             .addComponent(comboCourse, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtMobile)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel3))
+                                .addGap(0, 94, Short.MAX_VALUE))
+                            .addComponent(txtDOB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -211,13 +208,14 @@ public class AddNewStudent extends javax.swing.JDialog {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtDOB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtNIC, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtDOB, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
                         .addComponent(jLabel8)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -264,12 +262,11 @@ public class AddNewStudent extends javax.swing.JDialog {
         try {
             String id = txtID.getText();
             String name = AESUtil.encrypt(txtName.getText());
-            String dob = txtDOB.getText();
+            String dob = txtDOB.getDateFormatString();
             String mobile = AESUtil.encrypt(txtMobile.getText());
             String nic = AESUtil.encrypt(txtNIC.getText());
             String medNoText = txtMedNo.getText();
             String address = AESUtil.encrypt(txtAddress.getText());
-            String medNoPart;
 
             if (!Validator.isNameValid(txtName.getText())) {
                 return;
@@ -284,42 +281,39 @@ public class AddNewStudent extends javax.swing.JDialog {
                 return;
             }
 
-            if (medNoText.isEmpty()) {
-                medNoPart = "NULL";
-            } else {
-                medNoPart = "'" + AESUtil.encrypt(medNoText) + "'";
-            }
+            String medNoEncrypted = medNoText.isEmpty() ? null : AESUtil.encrypt(medNoText);
+           
+            MySQL mysql = new MySQLProxy();
 
-            MySQL MySQL = new MySQLProxy();
-            MySQL.executeIUD("INSERT INTO student (id, name, dob, mobile, nic, medical_no, address) "
-                    + "VALUES ('" + id + "','" + name + "', '" + dob + "', '" + mobile + "', '" + nic + "', " + medNoPart + ", '" + address + "')");
+            mysql.executeIUD(
+                    "INSERT INTO student (id, name, dob, mobile, nic, medical_no, address) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    id, name, dob, mobile, nic, medNoEncrypted, address
+            );
 
             String courseCode = comboCourse.getSelectedItem().toString();
-            MySQL.executeIUD("INSERT INTO student_has_course (student_id, course_code) "
-                    + "VALUES (" + id + ", '" + courseCode + "')");
+            mysql.executeIUD(
+                    "INSERT INTO student_has_course (student_id, course_code) VALUES (?, ?)",
+                    id, courseCode
+            );
 
             Notifications.getInstance().show(Notifications.Type.SUCCESS,
                     Notifications.Location.TOP_CENTER,
                     3000,
                     "Student Successfully Added");
-            
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(3000);
-                        addNewStudent.dispose();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                    addNewStudent.dispose();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }).start();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
     }//GEN-LAST:event_addBtnActionPerformed
 
@@ -383,7 +377,7 @@ public class AddNewStudent extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField txtAddress;
-    private javax.swing.JFormattedTextField txtDOB;
+    private com.toedter.calendar.JDateChooser txtDOB;
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtMedNo;
     private javax.swing.JTextField txtMobile;
