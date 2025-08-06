@@ -4,17 +4,16 @@
  */
 package com.ranjithlearners.dialog;
 
-import com.ranjithlearners.gui.HomeScreen;
-
 /**
  *
  * @author Akash Weerasinghe
  */
-public class SearchDialog extends javax.swing.JDialog {
+public class AddNewExamDate extends javax.swing.JDialog {
+
     /**
-     * Creates new form SearchDialog
+     * Creates new form AddNewExamDate
      */
-    public SearchDialog(java.awt.Frame parent, boolean modal) {
+    public AddNewExamDate(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -28,23 +27,17 @@ public class SearchDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton3 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setUndecorated(true);
 
-        jButton3.setBackground(new java.awt.Color(0, 102, 204));
-        jButton3.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
-        jButton3.setText("Search");
-        jButton3.setMargin(new java.awt.Insets(5, 14, 3, 14));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
+        jLabel9.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
+        jLabel9.setText("Enter Exam Date:");
+
+        jTextField1.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
 
         jButton2.setBackground(new java.awt.Color(102, 0, 0));
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
@@ -55,10 +48,15 @@ public class SearchDialog extends javax.swing.JDialog {
             }
         });
 
-        jTextField1.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
-
-        jLabel9.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
-        jLabel9.setText("Enter the DSR or the Name of the Student :");
+        jButton3.setBackground(new java.awt.Color(0, 102, 204));
+        jButton3.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
+        jButton3.setText("Add");
+        jButton3.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -70,7 +68,7 @@ public class SearchDialog extends javax.swing.JDialog {
                     .addComponent(jTextField1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -87,22 +85,20 @@ public class SearchDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        String dsr = jTextField1.getText();
-        new EditStudentDetails(dsr).setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jButton3ActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -121,20 +117,20 @@ public class SearchDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddNewExamDate.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddNewExamDate.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddNewExamDate.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddNewExamDate.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SearchDialog dialog = new SearchDialog(new javax.swing.JFrame(), true);
+                AddNewExamDate dialog = new AddNewExamDate(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

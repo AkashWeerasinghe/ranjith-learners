@@ -53,6 +53,7 @@ public class ExamResultsPanel extends BackgroundPanel {
         practicalExamTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(153, 153, 153));
         setMinimumSize(new java.awt.Dimension(830, 645));
@@ -60,6 +61,12 @@ public class ExamResultsPanel extends BackgroundPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Exam Results");
+
+        jTabbedPane1.setBackground(new java.awt.Color(0, 30, 61));
+
+        jPanel1.setBackground(new java.awt.Color(0, 30, 61));
+
+        jScrollPane1.setBackground(new java.awt.Color(0, 30, 61));
 
         writtenExamTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -89,6 +96,10 @@ public class ExamResultsPanel extends BackgroundPanel {
         );
 
         jTabbedPane1.addTab("Written Exam", jPanel1);
+
+        jPanel2.setBackground(new java.awt.Color(0, 30, 61));
+
+        jScrollPane2.setBackground(new java.awt.Color(0, 30, 61));
 
         practicalExamTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -133,6 +144,10 @@ public class ExamResultsPanel extends BackgroundPanel {
         jButton2.setToolTipText("");
         jButton2.setMargin(new java.awt.Insets(5, 14, 3, 14));
 
+        jButton3.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
+        jButton3.setText("Add new Exam Date");
+        jButton3.setMargin(new java.awt.Insets(5, 14, 3, 14));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -144,6 +159,8 @@ public class ExamResultsPanel extends BackgroundPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -156,7 +173,8 @@ public class ExamResultsPanel extends BackgroundPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addGap(23, 23, 23)
                 .addComponent(jTabbedPane1)
                 .addContainerGap())
@@ -204,7 +222,6 @@ public class ExamResultsPanel extends BackgroundPanel {
         try {
             DefaultTableModel model = (DefaultTableModel) practicalExamTable.getModel();
             model.setRowCount(0);
-0
             String sql = """
             SELECT 
                 s.id AS student_id,
@@ -239,13 +256,14 @@ public class ExamResultsPanel extends BackgroundPanel {
 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
