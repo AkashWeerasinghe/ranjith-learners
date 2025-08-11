@@ -6,7 +6,10 @@ package com.ranjithlearners.dialog;
 
 import com.ranjithlearners.connection.MySQL;
 import com.ranjithlearners.connection.MySQLProxy;
+import com.ranjithlearners.panel.ExamResultsPanel;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,12 +17,61 @@ import java.sql.SQLException;
  */
 public class AddNewExamDate extends javax.swing.JDialog {
 
-    /**
-     * Creates new form AddNewExamDate
-     */
+    private ExamResultsPanel examResultsPanel;
+    
+    public AddNewExamDate(ExamResultsPanel parent){        
+        this.examResultsPanel = parent;
+        initComponents();
+    }
+    
     public AddNewExamDate(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        initComponents();
+    }
+
+    private void addWrittenDate() {
+        java.util.Date selectedDate = jDateChooser1.getDate();
+        if (selectedDate != null) {
+            java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
+
+            MySQL mysql = new MySQLProxy();
+
+            try {
+                ResultSet rs = mysql.executeSearch("SELECT date FROM written_examination WHERE date = ?", sqlDate);
+                if (rs.next()) {
+                    JOptionPane.showMessageDialog(null, "❗Date already exists in the database.");
+                } else {
+                    mysql.executeIUD("INSERT INTO written_examination (date) VALUES (?)", sqlDate);
+                    JOptionPane.showMessageDialog(null, "✅ Date added successfully.");
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "⚠️ Please select a date.");
+        }
+    }
+
+    private void addPracticalDate() {
+        java.util.Date selectedDate = jDateChooser1.getDate();
+        if (selectedDate != null) {
+            java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
+
+            MySQL mysql = new MySQLProxy();
+
+            try {
+                ResultSet rs = mysql.executeSearch("SELECT date FROM practical_examination WHERE date = ?", sqlDate);
+                if (rs.next()) {
+                    JOptionPane.showMessageDialog(null, "❗Date already exists in the database.");
+                } else {
+                    mysql.executeIUD("INSERT INTO practical_examination (date) VALUES (?)", sqlDate);
+                    JOptionPane.showMessageDialog(null, "✅ Date added successfully.");
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "⚠️ Please select a date.");
+        }
     }
 
     /**
@@ -37,6 +89,7 @@ public class AddNewExamDate extends javax.swing.JDialog {
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setUndecorated(true);
 
         jLabel9.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
         jLabel9.setText("Enter Exam Date:");
@@ -99,19 +152,16 @@ public class AddNewExamDate extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
-        String date = jDateChooser1.getDateFormatString();
-
-        MySQL mysql = new MySQLProxy();
-
-        try {
-            mysql.executeIUD(
-                    "INSERT INTO written_examination (date) VALUES (?)",
-                    date
-            );
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        examResultsPanel.jTabbedPane1.addChangeListener(e
+                -> {
+            int selected = examResultsPanel.jTabbedPane1.getSelectedIndex();
+            if (selected == 1) {
+                addWrittenDate();
+            } else if (selected == 2) {
+                addPracticalDate();
+            }
         }
+        );
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

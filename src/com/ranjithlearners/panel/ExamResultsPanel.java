@@ -6,6 +6,10 @@ package com.ranjithlearners.panel;
 
 import com.ranjithlearners.connection.MySQL;
 import com.ranjithlearners.connection.MySQLProxy;
+import com.ranjithlearners.dialog.AddNewExamDate;
+import com.ranjithlearners.dialog.AddNewExamResult;
+import com.ranjithlearners.dialog.AddNewStudent;
+import com.ranjithlearners.gui.HomeScreen;
 import com.ranjithlearners.util.BackgroundPanel;
 import java.sql.ResultSet;
 import java.util.Vector;
@@ -17,11 +21,13 @@ import javax.swing.table.DefaultTableModel;
  * @author Akash Weerasinghe
  */
 public class ExamResultsPanel extends BackgroundPanel {
-
+    
+    private final HomeScreen homeScreen;
     private final MySQL MySQL = new MySQLProxy();
 
-    public ExamResultsPanel() {
+    public ExamResultsPanel(HomeScreen parent) {
         initComponents();
+        this.homeScreen = parent;
         jTabbedPane1.addChangeListener(e
                 -> {
             int selected = jTabbedPane1.getSelectedIndex();
@@ -73,7 +79,7 @@ public class ExamResultsPanel extends BackgroundPanel {
 
             },
             new String [] {
-                "DSR", "Name", "SMRT", "Result"
+                "DSR", "Name", "SMRT", "Date", "Result"
             }
         ));
         jScrollPane1.setViewportView(writtenExamTable);
@@ -106,7 +112,7 @@ public class ExamResultsPanel extends BackgroundPanel {
 
             },
             new String [] {
-                "DSR", "Name", "SMRT", "Vehicle Classes", "Result"
+                "DSR", "Name", "SMRT", "Vehicle Classes", "Date", "Result"
             }
         ));
         jScrollPane2.setViewportView(practicalExamTable);
@@ -147,6 +153,11 @@ public class ExamResultsPanel extends BackgroundPanel {
         jButton3.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
         jButton3.setText("Add new Exam Date");
         jButton3.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -191,13 +202,20 @@ public class ExamResultsPanel extends BackgroundPanel {
                 s.id AS student_id,
                 s.name AS student_name,
                 swe.written_examination_date AS exam_date,
-                swe.status AS exam_status
+                swe.status AS exam_status,
+                shs.smrt_smrt_no AS smrt_no,
+                shs.smrt_yearcode AS smrt_yearcode,
+                c.code AS vehicle_class
             FROM student_has_written_examination swe
             JOIN student_has_smrt shs 
               ON swe.student_has_smrt_student_id = shs.student_id
              AND swe.student_has_smrt_smrt_yearcode = shs.smrt_yearcode
              AND swe.student_has_smrt_smrt_smrt_no = shs.smrt_smrt_no
             JOIN student s ON shs.student_id = s.id
+            LEFT JOIN student_has_course shc 
+              ON s.id = shc.student_id
+            LEFT JOIN course c 
+              ON shc.course_code = c.code;
         """;
 
             ResultSet rs = MySQL.executeSearch(sql);
@@ -206,6 +224,7 @@ public class ExamResultsPanel extends BackgroundPanel {
                 Vector<Object> row = new Vector<>();
                 row.add(rs.getString("student_id"));
                 row.add(rs.getString("student_name"));
+                row.add("SMRT/"+rs.getString("smrt_yearcode")+"/"+rs.getString("vehicle_class")+"/"+rs.getString("smrt_no"));
                 row.add(rs.getString("exam_date"));
                 row.add(rs.getString("exam_status"));
                 model.addRow(row);
@@ -227,13 +246,20 @@ public class ExamResultsPanel extends BackgroundPanel {
                 s.id AS student_id,
                 s.name AS student_name,
                 spe.practical_examination_date AS exam_date,
-                spe.status AS exam_status
+                spe.status AS exam_status,
+                shs.smrt_smrt_no AS smrt_no,
+                shs.smrt_yearcode AS smrt_yearcode,
+                c.code AS vehicle_class
             FROM student_has_practical_examination spe
             JOIN student_has_smrt shs 
               ON spe.student_has_smrt_student_id = shs.student_id
              AND spe.student_has_smrt_smrt_yearcode = shs.smrt_yearcode
              AND spe.student_has_smrt_smrt_smrt_no = shs.smrt_smrt_no
             JOIN student s ON shs.student_id = s.id
+            LEFT JOIN student_has_course shc 
+              ON s.id = shc.student_id
+            LEFT JOIN course c 
+              ON shc.course_code = c.code;
         """;
 
             ResultSet rs = MySQL.executeSearch(sql);
@@ -242,6 +268,8 @@ public class ExamResultsPanel extends BackgroundPanel {
                 Vector<Object> row = new Vector<>();
                 row.add(rs.getString("student_id"));
                 row.add(rs.getString("student_name"));
+                row.add("SMRT/"+rs.getString("smrt_yearcode")+"/"+rs.getString("vehicle_class")+"/"+rs.getString("smrt_no"));
+                row.add(rs.getString("vehicle_class"));
                 row.add(rs.getString("exam_date"));
                 row.add(rs.getString("exam_status"));
                 model.addRow(row);
@@ -256,8 +284,16 @@ public class ExamResultsPanel extends BackgroundPanel {
 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        AddNewExamResult addExam = new AddNewExamResult(this);
+        addExam.setLocationRelativeTo(homeScreen);
+        addExam.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        AddNewExamDate addExamDate = new AddNewExamDate(this);
+        addExamDate.setLocationRelativeTo(homeScreen);
+        addExamDate.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -269,7 +305,7 @@ public class ExamResultsPanel extends BackgroundPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    public javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable practicalExamTable;
     private javax.swing.JTable writtenExamTable;
     // End of variables declaration//GEN-END:variables

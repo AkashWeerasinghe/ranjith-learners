@@ -99,7 +99,7 @@ public class HomeScreen extends javax.swing.JFrame {
         this.dashboardPanel = new DashboardPanel();
         this.studentDetailsPanel = new StudentDetailsPanel(this);
         this.paymentdetailsPanel = new PaymentDetailsPanel();
-        this.examresultsPanel = new ExamResultsPanel();
+        this.examresultsPanel = new ExamResultsPanel(this);
         this.certificatecreatorPanel = new CertificateCreatorPanel();
 
 //        this.dashboardPanel.putClientProperty(FlatClientProperties.STYLE, "arc:20");

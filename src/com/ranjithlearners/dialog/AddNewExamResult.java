@@ -4,18 +4,94 @@
  */
 package com.ranjithlearners.dialog;
 
+import com.ranjithlearners.connection.MySQL;
+import com.ranjithlearners.connection.MySQLProxy;
+import com.ranjithlearners.panel.ExamResultsPanel;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author Akash Weerasinghe
  */
 public class AddNewExamResult extends javax.swing.JDialog {
 
-    /**
-     * Creates new form AddNewExamResult
-     */
+    private ExamResultsPanel examResultsPanel;
+
+    public AddNewExamResult(ExamResultsPanel parent) {
+        initComponents();
+        this.examResultsPanel = parent;
+        parent.jTabbedPane1.addChangeListener(e
+                -> {
+            int selected = parent.jTabbedPane1.getSelectedIndex();
+            if (selected == 1) {
+                loadWrittenDates();
+            } else if (selected == 2) {
+                loadPracticalDates();
+            }
+        }
+        );
+
+    }
+
     public AddNewExamResult(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        initComponents();
+    }
+
+    private void loadWrittenDates() {
+        try {
+            MySQL db = new MySQLProxy();
+            ResultSet rs = db.executeSearch("SELECT date FROM written_examination");
+            while (rs.next()) {
+                comboDate.addItem(rs.getString("date"));
+            }
+        } catch (Exception e) {
+        }
+
+    }
+
+    private void loadPracticalDates() {
+        try {
+            MySQL db = new MySQLProxy();
+            ResultSet rs = db.executeSearch("SELECT date FROM practical_examination");
+            while (rs.next()) {
+                comboDate.addItem(rs.getString("date"));
+            }
+        } catch (Exception e) {
+        }
+
+    }
+
+    private void addToWrittenResults() {
+        String examDate = comboDate.getSelectedItem().toString();
+        String status = comboStatus.getSelectedItem().toString().toLowerCase();
+        String studentId = txtID.getText().trim();
+        String smrtYearcode = txtYC.getText().trim();
+        String smrtNo = txtSMRT.getText().trim();
+        try {
+            MySQL db = new MySQLProxy();
+            String sql = "INSERT INTO student_has_written_examination "
+                    + "(written_examination_date, status, student_has_smrt_student_id, student_has_smrt_smrt_yearcode, student_has_smrt_smrt_smrt_no) "
+                    + "VALUES (?, ?, ?, ?, ?)";
+            db.executeIUD(sql, examDate, status, studentId, smrtYearcode, smrtNo);
+        } catch (SQLException e) {
+        }
+    }
+    
+    private void addToPracticalResults() {
+        String examDate = comboDate.getSelectedItem().toString();
+        String status = comboStatus.getSelectedItem().toString().toLowerCase();
+        String studentId = txtID.getText().trim();
+        String smrtYearcode = txtYC.getText().trim();
+        String smrtNo = txtSMRT.getText().trim();
+        try {
+            MySQL db = new MySQLProxy();
+            String sql = "INSERT INTO student_has_practical_examination "
+                    + "(written_examination_date, status, student_has_smrt_student_id, student_has_smrt_smrt_yearcode, student_has_smrt_smrt_smrt_no) "
+                    + "VALUES (?, ?, ?, ?, ?)";
+            db.executeIUD(sql, examDate, status, studentId, smrtYearcode, smrtNo);
+        } catch (SQLException e) {
+        }
     }
 
     /**
@@ -29,61 +105,48 @@ public class AddNewExamResult extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtName = new javax.swing.JTextField();
+        txtSMRT = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtNIC = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        txtYC = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        comboCourse = new javax.swing.JComboBox<>();
+        comboDate = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         txtID = new javax.swing.JTextField();
-        txtDOB = new javax.swing.JFormattedTextField();
         jButton1 = new javax.swing.JButton();
-        txtMedNo = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        txtMobile = new javax.swing.JTextField();
         addBtn = new javax.swing.JButton();
-        txtAddress = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        comboStatus = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setUndecorated(true);
 
         jLabel1.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
-        jLabel1.setText("Full Name : ");
+        jLabel1.setText("SMRT No:");
 
-        txtName.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        txtSMRT.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
-        jLabel2.setText("NIC No :");
+        jLabel2.setText("Year Code:");
 
-        txtNIC.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
-        txtNIC.addActionListener(new java.awt.event.ActionListener() {
+        txtYC.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        txtYC.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNICActionPerformed(evt);
+                txtYCActionPerformed(evt);
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
-        jLabel3.setText("Date Of Birth :");
-
-        jLabel4.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
-        jLabel4.setText("Medical No :");
-
         jLabel5.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
-        jLabel5.setText("Course :");
+        jLabel5.setText("Exam Date:");
 
-        comboCourse.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
-        comboCourse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Course" }));
-        comboCourse.setRenderer(null);
+        comboDate.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        comboDate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Date" }));
+        comboDate.setRenderer(null);
 
         jLabel7.setFont(new java.awt.Font("Bahnschrift", 1, 24)); // NOI18N
         jLabel7.setText("DSR :");
 
         txtID.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
         txtID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        txtDOB.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy-MM-dd"))));
 
         jButton1.setBackground(new java.awt.Color(102, 0, 0));
         jButton1.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
@@ -96,17 +159,6 @@ public class AddNewExamResult extends javax.swing.JDialog {
             }
         });
 
-        txtMedNo.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
-        txtMedNo.setPreferredSize(new java.awt.Dimension(40, 22));
-        txtMedNo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMedNoActionPerformed(evt);
-            }
-        });
-
-        jLabel8.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
-        jLabel8.setText("Mobile No :");
-
         addBtn.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
         addBtn.setText("Add Student");
         addBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -115,8 +167,17 @@ public class AddNewExamResult extends javax.swing.JDialog {
             }
         });
 
-        jLabel6.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
-        jLabel6.setText("Address :");
+        jLabel9.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
+        jLabel9.setText("Result:");
+
+        comboStatus.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Result", "Pending", "Passed", "Failed" }));
+        comboStatus.setRenderer(null);
+        comboStatus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboStatusActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -125,79 +186,57 @@ public class AddNewExamResult extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtMedNo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel5))
-                        .addGap(168, 168, 168)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtMobile)
-                            .addComponent(txtDOB, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel3))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(comboDate, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtAddress)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
                             .addComponent(jLabel1)
-                            .addComponent(comboCourse, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jLabel7)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                    .addComponent(txtSMRT, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txtYC, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel2))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel9)
+                                        .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel7)
-                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(23, 23, 23)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtDOB, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel8)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(comboCourse, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtMobile, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtMedNo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtSMRT, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtYC, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
+                .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(comboDate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -206,9 +245,9 @@ public class AddNewExamResult extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,79 +257,30 @@ public class AddNewExamResult extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtNICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNICActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNICActionPerformed
+    private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
+        examResultsPanel.jTabbedPane1.addChangeListener(e
+                -> {
+            int selected = examResultsPanel.jTabbedPane1.getSelectedIndex();
+            if (selected == 1) {
+                addToWrittenResults();
+            } else if (selected == 2) {
+                addToPracticalResults();
+            }
+        }
+        );
+    }//GEN-LAST:event_addBtnActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtMedNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMedNoActionPerformed
+    private void txtYCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtYCActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMedNoActionPerformed
+    }//GEN-LAST:event_txtYCActionPerformed
 
-    private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-        try {
-            String id = txtID.getText();
-            String name = AESUtil.encrypt(txtName.getText());
-            String dob = txtDOB.getText();
-            String mobile = AESUtil.encrypt(txtMobile.getText());
-            String nic = AESUtil.encrypt(txtNIC.getText());
-            String medNoText = txtMedNo.getText();
-            String address = AESUtil.encrypt(txtAddress.getText());
-            String medNoPart;
-
-            if (!Validator.isNameValid(txtName.getText())) {
-                return;
-            }
-            if (!Validator.isDOBValid(dob)) {
-                return;
-            }
-            if (!Validator.isNicValid(txtNIC.getText())) {
-                return;
-            }
-            if (!Validator.isAddressvalid(txtAddress.getText())) {
-                return;
-            }
-
-            if (medNoText.isEmpty()) {
-                medNoPart = "NULL";
-            } else {
-                medNoPart = "'" + AESUtil.encrypt(medNoText) + "'";
-            }
-
-            MySQL MySQL = new MySQLProxy();
-            MySQL.executeIUD("INSERT INTO student (id, name, dob, mobile, nic, medical_no, address) "
-                + "VALUES ('" + id + "','" + name + "', '" + dob + "', '" + mobile + "', '" + nic + "', " + medNoPart + ", '" + address + "')");
-
-            String courseCode = comboCourse.getSelectedItem().toString();
-            MySQL.executeIUD("INSERT INTO student_has_course (student_id, course_code) "
-                + "VALUES (" + id + ", '" + courseCode + "')");
-
-            Notifications.getInstance().show(Notifications.Type.SUCCESS,
-                Notifications.Location.TOP_CENTER,
-                3000,
-                "Student Successfully Added");
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(3000);
-                        addNewStudent.dispose();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_addBtnActionPerformed
+    private void comboStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboStatusActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboStatusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -336,23 +326,17 @@ public class AddNewExamResult extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBtn;
-    private javax.swing.JComboBox<String> comboCourse;
+    private javax.swing.JComboBox<String> comboDate;
+    private javax.swing.JComboBox<String> comboStatus;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtAddress;
-    private javax.swing.JFormattedTextField txtDOB;
     private javax.swing.JTextField txtID;
-    private javax.swing.JTextField txtMedNo;
-    private javax.swing.JTextField txtMobile;
-    private javax.swing.JTextField txtNIC;
-    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtSMRT;
+    private javax.swing.JTextField txtYC;
     // End of variables declaration//GEN-END:variables
 }

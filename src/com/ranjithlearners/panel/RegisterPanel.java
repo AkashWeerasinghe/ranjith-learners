@@ -158,11 +158,13 @@ public class RegisterPanel extends javax.swing.JPanel {
         }
 
         try {
+            String encryptedEmail = AESUtil.encrypt(email);  // Encrypt email here
             String encryptedPassword = AESUtil.encrypt(password);
+
             MySQL db = new MySQLProxy();
 
             String checkSql = "SELECT * FROM `admin` WHERE `email` = ?";
-            ResultSet rs = db.executeSearch(checkSql, email);
+            ResultSet rs = db.executeSearch(checkSql, encryptedEmail);  // Search with encrypted email
 
             if (rs.next()) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
@@ -171,7 +173,7 @@ public class RegisterPanel extends javax.swing.JPanel {
                         "The Email is Already Registered!");
             } else {
                 String insertSql = "INSERT INTO `admin` (`email`, `password`, `status_id`) VALUES (?, ?, 1)";
-                db.executeIUD(insertSql, email, encryptedPassword);
+                db.executeIUD(insertSql, encryptedEmail, encryptedPassword);  // Insert encrypted email
 
                 Notifications.getInstance().show(Notifications.Type.SUCCESS,
                         Notifications.Location.TOP_CENTER,
@@ -181,8 +183,9 @@ public class RegisterPanel extends javax.swing.JPanel {
                 this.contentPanelLayout.show(contentPanel, "login_panel");
             }
         } catch (Exception e) {
-            throw new RuntimeException(e); // Delegate exception handling to caller
+            throw new RuntimeException(e);
         }
+
     }//GEN-LAST:event_registerBtnActionPerformed
 
 

@@ -169,7 +169,7 @@ public class LoginPanel extends javax.swing.JPanel {
 
     private void signingBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signingBtnActionPerformed
         String email = txtEmail.getText().trim();
-        String password = String.valueOf(txtPassword.getPassword());
+        String password = String.valueOf(txtPassword.getPassword()).trim();
 
         if (!Validator.isEmailValid(email)) {
             return;
@@ -180,11 +180,12 @@ public class LoginPanel extends javax.swing.JPanel {
 
         try {
             MySQL MySQL = new MySQLProxy();
+            String encryptedEmail = AESUtil.encrypt(email);
             String encryptedPassword = AESUtil.encrypt(password);
 
             ResultSet rs = MySQL.executeSearch(
                     "SELECT * FROM `admin` WHERE `email` = ? AND `password` = ?",
-                    email,
+                    encryptedEmail,
                     encryptedPassword
             );
 

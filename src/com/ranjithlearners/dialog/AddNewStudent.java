@@ -260,24 +260,24 @@ public class AddNewStudent extends javax.swing.JDialog {
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         try {
-            String id = txtID.getText();
-            String name = AESUtil.encrypt(txtName.getText());
-            String dob = txtDOB.getDateFormatString();
-            String mobile = AESUtil.encrypt(txtMobile.getText());
-            String nic = AESUtil.encrypt(txtNIC.getText());
-            String medNoText = txtMedNo.getText();
-            String address = AESUtil.encrypt(txtAddress.getText());
+            String id = txtID.getText().trim();
+            String name = AESUtil.encrypt(txtName.getText().trim());
+            String dob = txtDOB.getDateFormatString().trim();
+            String mobile = AESUtil.encrypt(txtMobile.getText().trim());
+            String nic = AESUtil.encrypt(txtNIC.getText().trim());
+            String medNoText = txtMedNo.getText().trim();
+            String address = AESUtil.encrypt(txtAddress.getText().trim());
 
-            if (!Validator.isNameValid(txtName.getText())) {
+            if (!Validator.isNameValid(txtName.getText().trim())) {
                 return;
             }
             if (!Validator.isDOBValid(dob)) {
                 return;
             }
-            if (!Validator.isNicValid(txtNIC.getText())) {
+            if (!Validator.isNicValid(txtNIC.getText().trim())) {
                 return;
             }
-            if (!Validator.isAddressvalid(txtAddress.getText())) {
+            if (!Validator.isAddressvalid(txtAddress.getText().trim())) {
                 return;
             }
 
