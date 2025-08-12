@@ -16,16 +16,12 @@ import javax.swing.JOptionPane;
  * @author Akash Weerasinghe
  */
 public class AddNewExamDate extends javax.swing.JDialog {
-
-    private ExamResultsPanel examResultsPanel;
-    
-    public AddNewExamDate(ExamResultsPanel parent){        
-        this.examResultsPanel = parent;
-        initComponents();
-    }
     
     public AddNewExamDate(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        initComponents();
+        buttonGroup1.add(writtenRadio);
+        buttonGroup1.add(practicalRadio);
     }
 
     private void addWrittenDate() {
@@ -83,10 +79,13 @@ public class AddNewExamDate extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel9 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        writtenRadio = new javax.swing.JRadioButton();
+        practicalRadio = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -113,6 +112,14 @@ public class AddNewExamDate extends javax.swing.JDialog {
             }
         });
 
+        jDateChooser1.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+
+        writtenRadio.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        writtenRadio.setText("Written Exam");
+
+        practicalRadio.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        practicalRadio.setText("Practical Exam");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -123,11 +130,16 @@ public class AddNewExamDate extends javax.swing.JDialog {
                     .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(writtenRadio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(practicalRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -139,7 +151,11 @@ public class AddNewExamDate extends javax.swing.JDialog {
                     .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(writtenRadio)
+                    .addComponent(practicalRadio))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -152,16 +168,11 @@ public class AddNewExamDate extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        examResultsPanel.jTabbedPane1.addChangeListener(e
-                -> {
-            int selected = examResultsPanel.jTabbedPane1.getSelectedIndex();
-            if (selected == 1) {
-                addWrittenDate();
-            } else if (selected == 2) {
-                addPracticalDate();
-            }
+        if(writtenRadio.isSelected()){
+            addWrittenDate();
+        }else if(practicalRadio.isSelected()){
+            addPracticalDate();
         }
-        );
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
@@ -207,9 +218,12 @@ public class AddNewExamDate extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JRadioButton practicalRadio;
+    private javax.swing.JRadioButton writtenRadio;
     // End of variables declaration//GEN-END:variables
 }

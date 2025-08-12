@@ -9,6 +9,7 @@ import com.ranjithlearners.connection.MySQLProxy;
 import com.ranjithlearners.panel.ExamResultsPanel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,17 +22,13 @@ public class AddNewExamResult extends javax.swing.JDialog {
     public AddNewExamResult(ExamResultsPanel parent) {
         initComponents();
         this.examResultsPanel = parent;
-        parent.jTabbedPane1.addChangeListener(e
-                -> {
-            int selected = parent.jTabbedPane1.getSelectedIndex();
-            if (selected == 1) {
-                loadWrittenDates();
-            } else if (selected == 2) {
-                loadPracticalDates();
-            }
+        buttonGroup1.add(writtenRadio);
+        buttonGroup1.add(practicalRadio);
+        if (writtenRadio.isSelected()) {
+            loadWrittenDates();
+        } else if (practicalRadio.isSelected()) {
+            loadPracticalDates();
         }
-        );
-
     }
 
     public AddNewExamResult(java.awt.Frame parent, boolean modal) {
@@ -40,8 +37,10 @@ public class AddNewExamResult extends javax.swing.JDialog {
 
     private void loadWrittenDates() {
         try {
+            comboDate.removeAllItems();
             MySQL db = new MySQLProxy();
             ResultSet rs = db.executeSearch("SELECT date FROM written_examination");
+            comboDate.addItem("Select Exam Date");
             while (rs.next()) {
                 comboDate.addItem(rs.getString("date"));
             }
@@ -52,8 +51,10 @@ public class AddNewExamResult extends javax.swing.JDialog {
 
     private void loadPracticalDates() {
         try {
+            comboDate.removeAllItems();
             MySQL db = new MySQLProxy();
             ResultSet rs = db.executeSearch("SELECT date FROM practical_examination");
+            comboDate.addItem("Select Exam Date");
             while (rs.next()) {
                 comboDate.addItem(rs.getString("date"));
             }
@@ -68,29 +69,60 @@ public class AddNewExamResult extends javax.swing.JDialog {
         String studentId = txtID.getText().trim();
         String smrtYearcode = txtYC.getText().trim();
         String smrtNo = txtSMRT.getText().trim();
+
+        if (studentId.isEmpty() || smrtYearcode.isEmpty() || smrtNo.isEmpty()
+                || examDate.equals("Select Exam Date") || status.equals("select result")) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields correctly", "Input Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         try {
             MySQL db = new MySQLProxy();
-            String sql = "INSERT INTO student_has_written_examination "
+            ResultSet rs = db.executeSearch("SELECT * FROM student_has_smrt WHERE student_id = ?", studentId);
+            if (!rs.next()) {
+                String sql = "INSERT INTO student_has_smrt "
+                        + "(student_id, smrt_yearcode, smrt_smrt_no) "
+                        + "VALUES (?, ?, ?)";
+                db.executeIUD(sql, studentId, smrtYearcode, smrtNo);
+            }
+            String SQL = "INSERT INTO student_has_written_examination "
                     + "(written_examination_date, status, student_has_smrt_student_id, student_has_smrt_smrt_yearcode, student_has_smrt_smrt_smrt_no) "
                     + "VALUES (?, ?, ?, ?, ?)";
-            db.executeIUD(sql, examDate, status, studentId, smrtYearcode, smrtNo);
+            db.executeIUD(SQL, examDate, status, studentId, smrtYearcode, smrtNo);
+            JOptionPane.showMessageDialog(this, "Written exam result added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void addToPracticalResults() {
         String examDate = comboDate.getSelectedItem().toString();
         String status = comboStatus.getSelectedItem().toString().toLowerCase();
         String studentId = txtID.getText().trim();
         String smrtYearcode = txtYC.getText().trim();
         String smrtNo = txtSMRT.getText().trim();
+        if (studentId.isEmpty() || smrtYearcode.isEmpty() || smrtNo.isEmpty()
+                || examDate.equals("Select Exam Date") || status.equals("select result")) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields correctly", "Input Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         try {
             MySQL db = new MySQLProxy();
+            ResultSet rs = db.executeSearch("SELECT * FROM student_has_smrt WHERE student_id = ?", studentId);
+            if (!rs.next()) {
+                String sql = "INSERT INTO student_has_smrt "
+                        + "(student_id, smrt_yearcode, smrt_smrt_no) "
+                        + "VALUES (?, ?, ?)";
+                db.executeIUD(sql, studentId, smrtYearcode, smrtNo);
+            }
             String sql = "INSERT INTO student_has_practical_examination "
-                    + "(written_examination_date, status, student_has_smrt_student_id, student_has_smrt_smrt_yearcode, student_has_smrt_smrt_smrt_no) "
+                    + "(practical_examination_date, status, student_has_smrt_student_id, student_has_smrt_smrt_yearcode, student_has_smrt_smrt_smrt_no) "
                     + "VALUES (?, ?, ?, ?, ?)";
             db.executeIUD(sql, examDate, status, studentId, smrtYearcode, smrtNo);
+            JOptionPane.showMessageDialog(this, "Practical exam result added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -103,6 +135,7 @@ public class AddNewExamResult extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtSMRT = new javax.swing.JTextField();
@@ -116,6 +149,8 @@ public class AddNewExamResult extends javax.swing.JDialog {
         addBtn = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         comboStatus = new javax.swing.JComboBox<>();
+        writtenRadio = new javax.swing.JRadioButton();
+        practicalRadio = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -179,6 +214,23 @@ public class AddNewExamResult extends javax.swing.JDialog {
             }
         });
 
+        writtenRadio.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        writtenRadio.setSelected(true);
+        writtenRadio.setText("Written Exam");
+        writtenRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                writtenRadioActionPerformed(evt);
+            }
+        });
+
+        practicalRadio.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        practicalRadio.setText("Practical Exam");
+        practicalRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                practicalRadioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -186,31 +238,35 @@ public class AddNewExamResult extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(comboDate, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
                     .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel5)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel7)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton1))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(txtSMRT, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(txtYC, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel2))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel9)
-                                        .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(writtenRadio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(47, 47, 47)
+                        .addComponent(practicalRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(comboDate, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel5)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButton1))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(txtSMRT, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtYC, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel2))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel9)
+                                            .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -236,7 +292,11 @@ public class AddNewExamResult extends javax.swing.JDialog {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboDate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(writtenRadio)
+                    .addComponent(practicalRadio))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -258,16 +318,11 @@ public class AddNewExamResult extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-        examResultsPanel.jTabbedPane1.addChangeListener(e
-                -> {
-            int selected = examResultsPanel.jTabbedPane1.getSelectedIndex();
-            if (selected == 1) {
-                addToWrittenResults();
-            } else if (selected == 2) {
-                addToPracticalResults();
-            }
+        if (writtenRadio.isSelected()) {
+            addToWrittenResults();
+        } else if (practicalRadio.isSelected()) {
+            addToPracticalResults();
         }
-        );
     }//GEN-LAST:event_addBtnActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -281,6 +336,14 @@ public class AddNewExamResult extends javax.swing.JDialog {
     private void comboStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboStatusActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboStatusActionPerformed
+
+    private void practicalRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_practicalRadioActionPerformed
+        loadPracticalDates();
+    }//GEN-LAST:event_practicalRadioActionPerformed
+
+    private void writtenRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writtenRadioActionPerformed
+        loadWrittenDates();
+    }//GEN-LAST:event_writtenRadioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -326,6 +389,7 @@ public class AddNewExamResult extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBtn;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboDate;
     private javax.swing.JComboBox<String> comboStatus;
     private javax.swing.JButton jButton1;
@@ -335,8 +399,10 @@ public class AddNewExamResult extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButton practicalRadio;
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtSMRT;
     private javax.swing.JTextField txtYC;
+    private javax.swing.JRadioButton writtenRadio;
     // End of variables declaration//GEN-END:variables
 }

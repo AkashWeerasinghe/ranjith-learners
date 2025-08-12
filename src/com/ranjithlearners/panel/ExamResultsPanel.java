@@ -4,12 +4,14 @@
  */
 package com.ranjithlearners.panel;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import com.ranjithlearners.connection.MySQL;
 import com.ranjithlearners.connection.MySQLProxy;
 import com.ranjithlearners.dialog.AddNewExamDate;
 import com.ranjithlearners.dialog.AddNewExamResult;
 import com.ranjithlearners.dialog.AddNewStudent;
 import com.ranjithlearners.gui.HomeScreen;
+import com.ranjithlearners.util.AESUtil;
 import com.ranjithlearners.util.BackgroundPanel;
 import java.sql.ResultSet;
 import java.util.Vector;
@@ -21,23 +23,38 @@ import javax.swing.table.DefaultTableModel;
  * @author Akash Weerasinghe
  */
 public class ExamResultsPanel extends BackgroundPanel {
-    
+
     private final HomeScreen homeScreen;
     private final MySQL MySQL = new MySQLProxy();
 
     public ExamResultsPanel(HomeScreen parent) {
         initComponents();
         this.homeScreen = parent;
-        jTabbedPane1.addChangeListener(e
-                -> {
-            int selected = jTabbedPane1.getSelectedIndex();
-            if (selected == 1) {
-                loadWrittenExamData();
-            } else if (selected == 2) {
-                loadPracticalExamData();
-            }
+        jTabbedPane1.setSelectedIndex(0);
+        int selected = jTabbedPane1.getSelectedIndex();
+        if (selected == 0) {
+            loadWrittenExamData();
+        } else if (selected == 1) {
+            loadPracticalExamData();
         }
+
+        refreshBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "arc:50; borderColor:#001E3D; borderWidth:2; hoverBackground:#FFA500; foreground:#001E3D"
         );
+        addDateBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "arc:50; borderColor:#001E3D; borderWidth:2; hoverBackground:#FFA500; foreground:#001E3D"
+        );
+        addResultBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "arc:50; borderColor:#001E3D; borderWidth:2; hoverBackground:#FFA500; foreground:#001E3D"
+        );
+        editBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "arc:50; borderColor:#001E3D; borderWidth:2; hoverBackground:#FFA500; foreground:#001E3D"
+        );
+
     }
 
     /**
@@ -57,9 +74,10 @@ public class ExamResultsPanel extends BackgroundPanel {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         practicalExamTable = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        addResultBtn = new javax.swing.JButton();
+        editBtn = new javax.swing.JButton();
+        addDateBtn = new javax.swing.JButton();
+        refreshBtn = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(153, 153, 153));
         setMinimumSize(new java.awt.Dimension(830, 645));
@@ -82,6 +100,7 @@ public class ExamResultsPanel extends BackgroundPanel {
                 "DSR", "Name", "SMRT", "Date", "Result"
             }
         ));
+        writtenExamTable.setShowGrid(true);
         jScrollPane1.setViewportView(writtenExamTable);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -115,6 +134,7 @@ public class ExamResultsPanel extends BackgroundPanel {
                 "DSR", "Name", "SMRT", "Vehicle Classes", "Date", "Result"
             }
         ));
+        practicalExamTable.setShowGrid(true);
         jScrollPane2.setViewportView(practicalExamTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -136,26 +156,39 @@ public class ExamResultsPanel extends BackgroundPanel {
 
         jTabbedPane1.addTab("Practical Exam", jPanel2);
 
-        jButton1.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
-        jButton1.setText("Add new Result");
-        jButton1.setMargin(new java.awt.Insets(5, 14, 3, 14));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        addResultBtn.setBackground(new java.awt.Color(211, 127, 0));
+        addResultBtn.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
+        addResultBtn.setText("Add new Result");
+        addResultBtn.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        addResultBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addResultBtnActionPerformed(evt);
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
-        jButton2.setText("Edit Results");
-        jButton2.setToolTipText("");
-        jButton2.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        editBtn.setBackground(new java.awt.Color(211, 127, 0));
+        editBtn.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
+        editBtn.setText("Edit Results");
+        editBtn.setToolTipText("");
+        editBtn.setMargin(new java.awt.Insets(5, 14, 3, 14));
 
-        jButton3.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
-        jButton3.setText("Add new Exam Date");
-        jButton3.setMargin(new java.awt.Insets(5, 14, 3, 14));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        addDateBtn.setBackground(new java.awt.Color(211, 127, 0));
+        addDateBtn.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
+        addDateBtn.setText("Add new Exam Date");
+        addDateBtn.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        addDateBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                addDateBtnActionPerformed(evt);
+            }
+        });
+
+        refreshBtn.setBackground(new java.awt.Color(211, 127, 0));
+        refreshBtn.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
+        refreshBtn.setText("Refresh");
+        refreshBtn.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        refreshBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshBtnActionPerformed(evt);
             }
         });
 
@@ -170,11 +203,13 @@ public class ExamResultsPanel extends BackgroundPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
+                        .addComponent(refreshBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(addDateBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(editBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addResultBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -183,9 +218,10 @@ public class ExamResultsPanel extends BackgroundPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(addResultBtn)
+                    .addComponent(editBtn)
+                    .addComponent(addDateBtn)
+                    .addComponent(refreshBtn))
                 .addGap(23, 23, 23)
                 .addComponent(jTabbedPane1)
                 .addContainerGap())
@@ -223,8 +259,8 @@ public class ExamResultsPanel extends BackgroundPanel {
             while (rs.next()) {
                 Vector<Object> row = new Vector<>();
                 row.add(rs.getString("student_id"));
-                row.add(rs.getString("student_name"));
-                row.add("SMRT/"+rs.getString("smrt_yearcode")+"/"+rs.getString("vehicle_class")+"/"+rs.getString("smrt_no"));
+                row.add(AESUtil.decrypt(rs.getString("student_name")));
+                row.add("SMRT/" + rs.getString("smrt_yearcode") + "/" + rs.getString("vehicle_class") + "/" + rs.getString("smrt_no"));
                 row.add(rs.getString("exam_date"));
                 row.add(rs.getString("exam_status"));
                 model.addRow(row);
@@ -267,8 +303,8 @@ public class ExamResultsPanel extends BackgroundPanel {
             while (rs.next()) {
                 Vector<Object> row = new Vector<>();
                 row.add(rs.getString("student_id"));
-                row.add(rs.getString("student_name"));
-                row.add("SMRT/"+rs.getString("smrt_yearcode")+"/"+rs.getString("vehicle_class")+"/"+rs.getString("smrt_no"));
+                row.add(AESUtil.decrypt(rs.getString("student_name")));
+                row.add("SM/RT/" + rs.getString("smrt_yearcode") + "/" + rs.getString("vehicle_class") + "/" + rs.getString("smrt_no"));
                 row.add(rs.getString("vehicle_class"));
                 row.add(rs.getString("exam_date"));
                 row.add(rs.getString("exam_status"));
@@ -283,23 +319,32 @@ public class ExamResultsPanel extends BackgroundPanel {
     }
 
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void addResultBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addResultBtnActionPerformed
         AddNewExamResult addExam = new AddNewExamResult(this);
         addExam.setLocationRelativeTo(homeScreen);
         addExam.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_addResultBtnActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        AddNewExamDate addExamDate = new AddNewExamDate(this);
+    private void addDateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDateBtnActionPerformed
+        AddNewExamDate addExamDate = new AddNewExamDate(homeScreen, true);
         addExamDate.setLocationRelativeTo(homeScreen);
         addExamDate.setVisible(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_addDateBtnActionPerformed
+
+    private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
+        int selected = jTabbedPane1.getSelectedIndex();
+        if (selected == 0) {
+            loadWrittenExamData();
+        } else if (selected == 1) {
+            loadPracticalExamData();
+        }
+    }//GEN-LAST:event_refreshBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton addDateBtn;
+    private javax.swing.JButton addResultBtn;
+    private javax.swing.JButton editBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -307,6 +352,7 @@ public class ExamResultsPanel extends BackgroundPanel {
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable practicalExamTable;
+    private javax.swing.JButton refreshBtn;
     private javax.swing.JTable writtenExamTable;
     // End of variables declaration//GEN-END:variables
 }

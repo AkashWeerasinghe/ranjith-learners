@@ -4,6 +4,7 @@
  */
 package com.ranjithlearners.gui;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import javax.swing.SwingUtilities;
@@ -150,7 +151,7 @@ private void updateProgress(int start, int end, String message) throws Interrupt
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                FlatDarkLaf.setup();
+                FlatDarculaLaf.setup();
                 splashScreen = new SplashScreen();
                 splashScreen.setVisible(true);
             }

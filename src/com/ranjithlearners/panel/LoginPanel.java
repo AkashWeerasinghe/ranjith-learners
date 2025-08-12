@@ -252,10 +252,10 @@ public class LoginPanel extends javax.swing.JPanel {
 
     private void toggleShowPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleShowPasswordActionPerformed
         if (toggleShowPassword.isSelected()) {
-            txtPassword.setEchoChar((char) 0); // Show password
+            txtPassword.setEchoChar((char) 0);
             toggleShowPassword.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ranjithlearners/img/eye.png")));
         } else {
-            txtPassword.setEchoChar('\u2022'); // Mask password
+            txtPassword.setEchoChar('\u2022');
             toggleShowPassword.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ranjithlearners/img/closed_eye.png")));
         }
     }//GEN-LAST:event_toggleShowPasswordActionPerformed
