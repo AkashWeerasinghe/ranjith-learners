@@ -10,6 +10,7 @@ import com.ranjithlearners.connection.MySQLProxy;
 import com.ranjithlearners.dialog.AddNewExamDate;
 import com.ranjithlearners.dialog.AddNewExamResult;
 import com.ranjithlearners.dialog.AddNewStudent;
+import com.ranjithlearners.dialog.SearchDialogExam;
 import com.ranjithlearners.gui.HomeScreen;
 import com.ranjithlearners.util.AESUtil;
 import com.ranjithlearners.util.BackgroundPanel;
@@ -86,9 +87,9 @@ public class ExamResultsPanel extends BackgroundPanel {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Exam Results");
 
-        jTabbedPane1.setBackground(new java.awt.Color(0, 30, 61));
+        jTabbedPane1.setBackground(new java.awt.Color(211, 127, 0));
 
-        jPanel1.setBackground(new java.awt.Color(0, 30, 61));
+        jPanel1.setBackground(new java.awt.Color(211, 127, 0));
 
         jScrollPane1.setBackground(new java.awt.Color(0, 30, 61));
 
@@ -122,7 +123,7 @@ public class ExamResultsPanel extends BackgroundPanel {
 
         jTabbedPane1.addTab("Written Exam", jPanel1);
 
-        jPanel2.setBackground(new java.awt.Color(0, 30, 61));
+        jPanel2.setBackground(new java.awt.Color(211, 127, 0));
 
         jScrollPane2.setBackground(new java.awt.Color(0, 30, 61));
 
@@ -171,6 +172,11 @@ public class ExamResultsPanel extends BackgroundPanel {
         editBtn.setText("Edit Results");
         editBtn.setToolTipText("");
         editBtn.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        editBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editBtnActionPerformed(evt);
+            }
+        });
 
         addDateBtn.setBackground(new java.awt.Color(211, 127, 0));
         addDateBtn.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
@@ -339,6 +345,12 @@ public class ExamResultsPanel extends BackgroundPanel {
             loadPracticalExamData();
         }
     }//GEN-LAST:event_refreshBtnActionPerformed
+
+    private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
+        SearchDialogExam searchDialogExam = new SearchDialogExam(homeScreen, true);
+        searchDialogExam.setLocationRelativeTo(homeScreen);
+        searchDialogExam.setVisible(true);
+    }//GEN-LAST:event_editBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

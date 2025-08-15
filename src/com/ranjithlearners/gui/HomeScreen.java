@@ -5,21 +5,26 @@
 package com.ranjithlearners.gui;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.ranjithlearners.panel.CertificateCreatorPanel;
 import com.ranjithlearners.panel.DashboardPanel;
 import com.ranjithlearners.panel.ExamResultsPanel;
 import com.ranjithlearners.panel.PaymentDetailsPanel;
 import com.ranjithlearners.panel.StudentDetailsPanel;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -39,7 +44,7 @@ public class HomeScreen extends javax.swing.JFrame {
     private CardLayout contentPanelLayout;
     private JPanel glassPaneOverlay;
     private boolean isCollapsed = false;
-    private final int COLLAPSED_WIDTH = 60;
+    private final int COLLAPSED_WIDTH = 0;
     private final int EXPANDED_WIDTH = 250;
 
     private void toggleSidePanel() {
@@ -57,8 +62,6 @@ public class HomeScreen extends javax.swing.JFrame {
                 timer.stop();
 
                 toggleButton.setText(isCollapsed ? "▶" : "◀");
-
-                // Show/hide components after animation completes
                 for (Component comp : sidePanel.getComponents()) {
                     if (comp != toggleButton) {
                         comp.setVisible(!isCollapsed);
@@ -69,7 +72,6 @@ public class HomeScreen extends javax.swing.JFrame {
             }
         });
 
-        // Temporarily hide/show components immediately to prevent layout shift
         if (!isCollapsed) {
             for (Component comp : sidePanel.getComponents()) {
                 if (comp != toggleButton) {
@@ -83,11 +85,27 @@ public class HomeScreen extends javax.swing.JFrame {
     }
 
     private void init() {
-        glassPaneOverlay = new JPanel();
-        glassPaneOverlay.setBackground(new Color(0, 0, 0, 100)); // Semi-transparent black
-        glassPaneOverlay.setVisible(false);
-        setGlassPane(glassPaneOverlay);
 
+        dashboardBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "hoverBackground:#FFA500; borderColor:#001225;"
+        );
+        studentdetailsBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "hoverBackground:#FFA500; borderColor:#001225;"
+        );
+        paymentdetailsBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "hoverBackground:#FFA500; borderColor:#001225;"
+        );
+        examresultsBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "hoverBackground:#FFA500; borderColor:#001225;"
+        );
+        certificatecreatorBtn.putClientProperty(
+                FlatClientProperties.STYLE,
+                "hoverBackground:#FFA500; borderColor:#001225;"
+        );
     }
 
     private void loadPanels() {
@@ -115,14 +133,34 @@ public class HomeScreen extends javax.swing.JFrame {
         SwingUtilities.updateComponentTreeUI(contentPanel);
     }
 
+    private void changeThemes(boolean dark) {
+        if (FlatLaf.isLafDark() != dark) {
+            if (!dark) {
+                EventQueue.invokeLater(() -> {
+                    FlatAnimatedLafChange.showSnapshot();
+                    FlatIntelliJLaf.setup();
+                    FlatLaf.updateUI();
+                    FlatAnimatedLafChange.hideSnapshotWithAnimation();
+                });
+            } else {
+                EventQueue.invokeLater(() -> {
+                    FlatAnimatedLafChange.showSnapshot();
+                    FlatDarculaLaf.setup();
+                    FlatLaf.updateUI();
+                    FlatAnimatedLafChange.hideSnapshotWithAnimation();
+                });
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        darkLightSwitchIcon1 = new com.ranjithlearners.util.DarkLightSwitchIcon();
         jSplitPane1 = new javax.swing.JSplitPane();
         sidePanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        toggleButton = new javax.swing.JToggleButton();
         jSeparator1 = new javax.swing.JSeparator();
         dashboardBtn = new javax.swing.JButton();
         studentdetailsBtn = new javax.swing.JButton();
@@ -131,8 +169,11 @@ public class HomeScreen extends javax.swing.JFrame {
         certificatecreatorBtn = new javax.swing.JButton();
         mainPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        toggleButton = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         contentPanel = new javax.swing.JPanel();
+
+        darkLightSwitchIcon1.setCenterSpace(20);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ranjith Driving Training School");
@@ -145,16 +186,7 @@ public class HomeScreen extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Bahnschrift", 1, 24)); // NOI18N
         jLabel1.setText("Options");
 
-        toggleButton.setBackground(new java.awt.Color(211, 127, 0));
-        toggleButton.setText("◀");
-        toggleButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        toggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toggleButtonActionPerformed(evt);
-            }
-        });
-
-        dashboardBtn.setBackground(new java.awt.Color(211, 127, 0));
+        dashboardBtn.setBackground(new java.awt.Color(0, 18, 37));
         dashboardBtn.setFont(new java.awt.Font("Bahnschrift", 0, 18)); // NOI18N
         dashboardBtn.setText("Dashboard");
         dashboardBtn.setMargin(new java.awt.Insets(8, 14, 3, 14));
@@ -165,7 +197,7 @@ public class HomeScreen extends javax.swing.JFrame {
             }
         });
 
-        studentdetailsBtn.setBackground(new java.awt.Color(211, 127, 0));
+        studentdetailsBtn.setBackground(new java.awt.Color(0, 18, 37));
         studentdetailsBtn.setFont(new java.awt.Font("Bahnschrift", 0, 18)); // NOI18N
         studentdetailsBtn.setText("Student Details");
         studentdetailsBtn.setMargin(new java.awt.Insets(8, 14, 3, 14));
@@ -175,7 +207,7 @@ public class HomeScreen extends javax.swing.JFrame {
             }
         });
 
-        paymentdetailsBtn.setBackground(new java.awt.Color(211, 127, 0));
+        paymentdetailsBtn.setBackground(new java.awt.Color(0, 18, 37));
         paymentdetailsBtn.setFont(new java.awt.Font("Bahnschrift", 0, 18)); // NOI18N
         paymentdetailsBtn.setText("Payment Details");
         paymentdetailsBtn.setMargin(new java.awt.Insets(8, 14, 3, 14));
@@ -185,7 +217,7 @@ public class HomeScreen extends javax.swing.JFrame {
             }
         });
 
-        examresultsBtn.setBackground(new java.awt.Color(211, 127, 0));
+        examresultsBtn.setBackground(new java.awt.Color(0, 18, 37));
         examresultsBtn.setFont(new java.awt.Font("Bahnschrift", 0, 18)); // NOI18N
         examresultsBtn.setText("Exam Results");
         examresultsBtn.setToolTipText("");
@@ -196,7 +228,7 @@ public class HomeScreen extends javax.swing.JFrame {
             }
         });
 
-        certificatecreatorBtn.setBackground(new java.awt.Color(211, 127, 0));
+        certificatecreatorBtn.setBackground(new java.awt.Color(0, 18, 37));
         certificatecreatorBtn.setFont(new java.awt.Font("Bahnschrift", 0, 18)); // NOI18N
         certificatecreatorBtn.setText("Certificate Creator");
         certificatecreatorBtn.setMargin(new java.awt.Insets(8, 14, 3, 14));
@@ -210,40 +242,36 @@ public class HomeScreen extends javax.swing.JFrame {
         sidePanel.setLayout(sidePanelLayout);
         sidePanelLayout.setHorizontalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(dashboardBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(studentdetailsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(studentdetailsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dashboardBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(toggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(paymentdetailsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
-                    .addComponent(examresultsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(certificatecreatorBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addComponent(examresultsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(certificatecreatorBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+            .addComponent(paymentdetailsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         sidePanelLayout.setVerticalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sidePanelLayout.createSequentialGroup()
-                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(toggleButton, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(dashboardBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(studentdetailsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(paymentdetailsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(examresultsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(certificatecreatorBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(339, 339, 339))
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dashboardBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(studentdetailsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(paymentdetailsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(examresultsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(certificatecreatorBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(331, Short.MAX_VALUE))
         );
 
         jSplitPane1.setLeftComponent(sidePanel);
@@ -257,6 +285,16 @@ public class HomeScreen extends javax.swing.JFrame {
         jLabel2.setMaximumSize(new java.awt.Dimension(828, 59));
         jLabel2.setMinimumSize(new java.awt.Dimension(828, 59));
 
+        toggleButton.setBackground(new java.awt.Color(211, 127, 0));
+        toggleButton.setText("◀");
+        toggleButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        toggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toggleButtonActionPerformed(evt);
+            }
+        });
+
+        contentPanel.setPreferredSize(new java.awt.Dimension(830, 645));
         contentPanel.setLayout(new java.awt.CardLayout());
         jScrollPane1.setViewportView(contentPanel);
 
@@ -267,32 +305,28 @@ public class HomeScreen extends javax.swing.JFrame {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addComponent(toggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 899, Short.MAX_VALUE))
+                .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE))
+                .addGap(11, 11, 11)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(toggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
 
         jSplitPane1.setRightComponent(mainPanel);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
-        );
+        getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
@@ -335,6 +369,7 @@ public class HomeScreen extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton certificatecreatorBtn;
     private javax.swing.JPanel contentPanel;
+    private com.ranjithlearners.util.DarkLightSwitchIcon darkLightSwitchIcon1;
     private javax.swing.JButton dashboardBtn;
     private javax.swing.JButton examresultsBtn;
     private javax.swing.JLabel jLabel1;

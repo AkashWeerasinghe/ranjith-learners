@@ -10,13 +10,17 @@ import com.ranjithlearners.gui.HomeScreen;
  *
  * @author Akash Weerasinghe
  */
-public class SearchDialog extends javax.swing.JDialog {
+public class SearchDialogExam extends javax.swing.JDialog {
+
     /**
-     * Creates new form SearchDialog
+     * Creates new form SearchDialogExam
      */
-    public SearchDialog(java.awt.Frame parent, boolean modal) {
+    public SearchDialogExam(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+
+        buttonGroup1.add(writtenRadio);
+        buttonGroup1.add(practicalRadio);
     }
 
     /**
@@ -28,10 +32,13 @@ public class SearchDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
+        writtenRadio = new javax.swing.JRadioButton();
+        practicalRadio = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -60,6 +67,23 @@ public class SearchDialog extends javax.swing.JDialog {
         jLabel9.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
         jLabel9.setText("Enter the DSR or the Name of the Student :");
 
+        writtenRadio.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        writtenRadio.setSelected(true);
+        writtenRadio.setText("Written Exam");
+        writtenRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                writtenRadioActionPerformed(evt);
+            }
+        });
+
+        practicalRadio.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        practicalRadio.setText("Practical Exam");
+        practicalRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                practicalRadioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -73,7 +97,10 @@ public class SearchDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(writtenRadio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(practicalRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -87,22 +114,56 @@ public class SearchDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(writtenRadio)
+                        .addComponent(practicalRadio))
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        String type = "";
+
+        if (writtenRadio.isSelected()) {
+            type = "written";
+        } else if (practicalRadio.isSelected()) {
+            type = "practical";
+        }
+
         String dsr = jTextField1.getText();
-        new EditStudentDetails(dsr).setVisible(true);
+
+        if (dsr.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please enter the DSR or the name of the student.",
+                    "Missing Input",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        EditExamResult editExamResult = new EditExamResult(dsr, type);
+        editExamResult.setVisible(true);
         this.dispose();
+
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void writtenRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writtenRadioActionPerformed
+
+    }//GEN-LAST:event_writtenRadioActionPerformed
+
+    private void practicalRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_practicalRadioActionPerformed
+
+    }//GEN-LAST:event_practicalRadioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -121,20 +182,20 @@ public class SearchDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SearchDialogExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SearchDialogExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SearchDialogExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SearchDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SearchDialogExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SearchDialog dialog = new SearchDialog(new javax.swing.JFrame(), true);
+                SearchDialogExam dialog = new SearchDialogExam(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -147,9 +208,12 @@ public class SearchDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JRadioButton practicalRadio;
+    private javax.swing.JRadioButton writtenRadio;
     // End of variables declaration//GEN-END:variables
 }

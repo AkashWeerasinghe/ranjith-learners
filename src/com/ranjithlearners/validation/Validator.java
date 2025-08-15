@@ -89,8 +89,8 @@ public class Validator {
         }
     }
     
-    public static boolean isDOBValid(String value){
-        if (value.isBlank()) {
+    public static boolean isDOBValid(java.sql.Date value){
+        if (value.toString().isEmpty()) {
             
             Notifications.getInstance().show(Notifications.Type.WARNING,
                     Notifications.Location.TOP_CENTER,

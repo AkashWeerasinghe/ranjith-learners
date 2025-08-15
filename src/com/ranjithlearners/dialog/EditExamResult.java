@@ -1,38 +1,48 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.ranjithlearners.dialog;
 
 import com.ranjithlearners.connection.MySQL;
 import com.ranjithlearners.connection.MySQLProxy;
-import com.ranjithlearners.panel.ExamResultsPanel;
+import com.ranjithlearners.util.AESUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import raven.toast.Notifications;
 
 /**
  *
  * @author Akash Weerasinghe
  */
-public class AddNewExamResult extends javax.swing.JDialog {
+public class EditExamResult extends javax.swing.JFrame {
 
-    private ExamResultsPanel examResultsPanel;
+    private final String TYPE;
+    private final String DSR;
 
-    public AddNewExamResult(ExamResultsPanel parent) {
+    /**
+     * Creates new form EditExamResult
+     */
+    public EditExamResult() {
         initComponents();
-        this.examResultsPanel = parent;
-        buttonGroup1.add(writtenRadio);
-        buttonGroup1.add(practicalRadio);
-        if (writtenRadio.isSelected()) {
-            loadWrittenDates();
-        } else if (practicalRadio.isSelected()) {
-            loadPracticalDates();
-        }
+        this.TYPE = null;
+        this.DSR = null;
     }
 
-    public AddNewExamResult(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public EditExamResult(String dsr, String type) {
+        initComponents();
+        buttonGroup1.add(writtenRadio);
+        buttonGroup1.add(practicalRadio);
+        txtID.setText(dsr);
+        this.TYPE = type;
+        this.DSR = dsr;
+        if(TYPE.equalsIgnoreCase("written")){
+            loadWrittenDates();
+        }else{
+            loadPracticalDates();
+        }
+        editExam(dsr, type);
     }
 
     private void loadWrittenDates() {
@@ -63,114 +73,88 @@ public class AddNewExamResult extends javax.swing.JDialog {
 
     }
 
-    private void addToWrittenResults() {
-        String examDate = comboDate.getSelectedItem().toString();
-        String status = comboStatus.getSelectedItem().toString().toLowerCase();
-        String studentId = txtID.getText().trim();
-        String smrtYearcode = txtYC.getText().trim();
-        String smrtNo = txtSMRT.getText().trim();
-
-        if (studentId.isEmpty() || smrtYearcode.isEmpty() || smrtNo.isEmpty()
-                || examDate.equals("Select Exam Date") || status.equals("select result")) {
-            JOptionPane.showMessageDialog(this, "Please fill all fields correctly", "Input Error", JOptionPane.WARNING_MESSAGE);
-            return;
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
         }
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
 
+    private void editExam(String studentId, String type) {
         try {
             MySQL db = new MySQLProxy();
+            String tableName, dateColumn;
 
-            ResultSet rs = db.executeSearch("SELECT * FROM student_has_smrt WHERE student_id = ?", studentId);
-            if (!rs.next()) {
-                String sql = "INSERT INTO student_has_smrt (student_id, smrt_yearcode, smrt_smrt_no) VALUES (?, ?, ?)";
-                db.executeIUD(sql, studentId, smrtYearcode, smrtNo);
+            if (type.equalsIgnoreCase("written")) {
+                tableName = "student_has_written_examination";
+                dateColumn = "written_examination_date";
+                writtenRadio.setSelected(true);
+            } else {
+                tableName = "student_has_practical_examination";
+                dateColumn = "practical_examination_date";
+                practicalRadio.setSelected(true);
             }
 
-            ResultSet attemptRS = db.executeSearch(
-                    "SELECT COUNT(*) AS attempt_count FROM student_has_written_examination WHERE student_has_smrt_student_id = ?",
+            ResultSet rs = db.executeSearch(
+                    "SELECT * FROM " + tableName
+                    + " WHERE student_has_smrt_student_id = ? "
+                    + " ORDER BY shy DESC LIMIT 1",
                     studentId
             );
 
-            int attemptCount = 0;
-            if (attemptRS.next()) {
-                attemptCount = attemptRS.getInt("attempt_count");
+            if (rs.next()) {
+                txtID.setText(studentId);
+                txtYC.setText(rs.getString("student_has_smrt_smrt_yearcode"));
+                txtSMRT.setText(rs.getString("student_has_smrt_smrt_smrt_no"));
+                comboDate.setSelectedItem(rs.getString(dateColumn));
+                comboStatus.setSelectedItem(capitalize(rs.getString("status")));
+            } else {
+                JOptionPane.showMessageDialog(this, "No " + type + " exam record found.", "Not Found", JOptionPane.WARNING_MESSAGE);
             }
-
-            if (attemptCount >= 3) {
-                JOptionPane.showMessageDialog(this, "This student has already faced the written exam 3 times!", "Limit Reached", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            int shyValue = attemptCount + 1;
-
-            String SQL = "INSERT INTO student_has_written_examination "
-                    + "(written_examination_date, status, shy, student_has_smrt_student_id, student_has_smrt_smrt_yearcode, student_has_smrt_smrt_smrt_no) "
-                    + "VALUES (?, ?, ?, ?, ?, ?)";
-            db.executeIUD(SQL, examDate, status, shyValue, studentId, smrtYearcode, smrtNo);
-
-            JOptionPane.showMessageDialog(this, "Written exam result added successfully! (Attempt " + shyValue + ")", "Success", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading " + type + " exam: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void addToPracticalResults() {
+    public void updateExam(String studentId, String type) {
         String examDate = comboDate.getSelectedItem().toString();
         String status = comboStatus.getSelectedItem().toString().toLowerCase();
-        String studentId = txtID.getText().trim();
-        String smrtYearcode = txtYC.getText().trim();
-        String smrtNo = txtSMRT.getText().trim();
-
-        if (studentId.isEmpty() || smrtYearcode.isEmpty() || smrtNo.isEmpty()
-                || examDate.equals("Select Exam Date") || status.equals("select result")) {
-            JOptionPane.showMessageDialog(this, "Please fill all fields correctly", "Input Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
 
         try {
             MySQL db = new MySQLProxy();
+            String tableName, dateColumn;
 
-
-            ResultSet rs = db.executeSearch("SELECT * FROM student_has_smrt WHERE student_id = ?", studentId);
-            if (!rs.next()) {
-                String sql = "INSERT INTO student_has_smrt (student_id, smrt_yearcode, smrt_smrt_no) VALUES (?, ?, ?)";
-                db.executeIUD(sql, studentId, smrtYearcode, smrtNo);
+            if (type.equalsIgnoreCase("written")) {
+                tableName = "student_has_written_examination";
+                dateColumn = "written_examination_date";
+            } else {
+                tableName = "student_has_practical_examination";
+                dateColumn = "practical_examination_date";
             }
 
-
-            ResultSet attemptRS = db.executeSearch(
-                    "SELECT COUNT(*) AS attempt_count FROM student_has_practical_examination WHERE student_has_smrt_student_id = ?",
-                    studentId
+            db.executeIUD(
+                    "UPDATE " + tableName
+                    + " SET " + dateColumn + " = ?, status = ? "
+                    + " WHERE student_has_smrt_student_id = ? "
+                    + " ORDER BY shy DESC LIMIT 1",
+                    examDate, status, studentId
             );
 
-            int attemptCount = 0;
-            if (attemptRS.next()) {
-                attemptCount = attemptRS.getInt("attempt_count");
-            }
-
-            if (attemptCount >= 3) {
-                JOptionPane.showMessageDialog(this, "This student has already faced the practical exam 3 times!", "Limit Reached", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-
-            int shyValue = attemptCount + 1;
-
-            String sql = "INSERT INTO student_has_practical_examination "
-                    + "(practical_examination_date, status, shy, student_has_smrt_student_id, student_has_smrt_smrt_yearcode, student_has_smrt_smrt_smrt_no) "
-                    + "VALUES (?, ?, ?, ?, ?, ?)";
-            db.executeIUD(sql, examDate, status, shyValue, studentId, smrtYearcode, smrtNo);
-
-            JOptionPane.showMessageDialog(this, "Practical exam result added successfully! (Attempt " + shyValue + ")", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, capitalize(type) + " exam updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error updating " + type + " exam: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -192,7 +176,7 @@ public class AddNewExamResult extends javax.swing.JDialog {
         writtenRadio = new javax.swing.JRadioButton();
         practicalRadio = new javax.swing.JRadioButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
         jLabel1.setFont(new java.awt.Font("Bahnschrift", 1, 16)); // NOI18N
@@ -220,6 +204,7 @@ public class AddNewExamResult extends javax.swing.JDialog {
         jLabel7.setFont(new java.awt.Font("Bahnschrift", 1, 24)); // NOI18N
         jLabel7.setText("DSR :");
 
+        txtID.setEditable(false);
         txtID.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
         txtID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
@@ -246,7 +231,7 @@ public class AddNewExamResult extends javax.swing.JDialog {
         jLabel9.setText("Result:");
 
         comboStatus.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
-        comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Result", "Pending", "Passed", "Failed" }));
+        comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Result", "PENDING", "PASSED", "FAILED" }));
         comboStatus.setRenderer(null);
         comboStatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -278,12 +263,10 @@ public class AddNewExamResult extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(writtenRadio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(47, 47, 47)
-                        .addComponent(practicalRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addComponent(practicalRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(comboDate, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -307,7 +290,9 @@ public class AddNewExamResult extends javax.swing.JDialog {
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel9)
                                             .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(addBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -345,9 +330,7 @@ public class AddNewExamResult extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -358,33 +341,29 @@ public class AddNewExamResult extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
-        if (writtenRadio.isSelected()) {
-            addToWrittenResults();
-        } else if (practicalRadio.isSelected()) {
-            addToPracticalResults();
-        }
-    }//GEN-LAST:event_addBtnActionPerformed
+    private void txtYCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtYCActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtYCActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtYCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtYCActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtYCActionPerformed
+    private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
+        updateExam(DSR, TYPE);
+    }//GEN-LAST:event_addBtnActionPerformed
 
     private void comboStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboStatusActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboStatusActionPerformed
 
-    private void practicalRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_practicalRadioActionPerformed
-        loadPracticalDates();
-    }//GEN-LAST:event_practicalRadioActionPerformed
-
     private void writtenRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writtenRadioActionPerformed
-        loadWrittenDates();
+
     }//GEN-LAST:event_writtenRadioActionPerformed
+
+    private void practicalRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_practicalRadioActionPerformed
+
+    }//GEN-LAST:event_practicalRadioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -403,27 +382,20 @@ public class AddNewExamResult extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddNewExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddNewExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddNewExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddNewExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditExamResult.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
-        /* Create and display the dialog */
+        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AddNewExamResult dialog = new AddNewExamResult(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+                new EditExamResult().setVisible(true);
             }
         });
     }

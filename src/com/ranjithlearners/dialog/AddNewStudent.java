@@ -248,6 +248,7 @@ public class AddNewStudent extends javax.swing.JDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtNICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNICActionPerformed
@@ -259,10 +260,12 @@ public class AddNewStudent extends javax.swing.JDialog {
     }//GEN-LAST:event_txtMedNoActionPerformed
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
+        java.util.Date selectedDate = txtDOB.getDate();
+        
         try {
             String id = txtID.getText().trim();
             String name = AESUtil.encrypt(txtName.getText().trim());
-            String dob = txtDOB.getDateFormatString().trim();
+            java.sql.Date dob = new java.sql.Date(selectedDate.getTime());
             String mobile = AESUtil.encrypt(txtMobile.getText().trim());
             String nic = AESUtil.encrypt(txtNIC.getText().trim());
             String medNoText = txtMedNo.getText().trim();
